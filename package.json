@@ -14,7 +14,6 @@
     "bcryptjs": "^3.0.3",
     "cytoscape": "^3.33.1",
     "cytoscape-cose-bilkent": "^4.1.0",
-    "cytoscape-react": "^4.0.0",
     "dotenv": "^17.2.3",
     "next": "16.0.3",
     "react": "19.2.0",
