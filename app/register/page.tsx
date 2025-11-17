@@ -53,7 +53,7 @@ export default function RegisterPage() {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">
               Criar Conta
             </h1>
-            <p className="text-zinc-400">Junte-se à nossa rede social</p>
+            <p className="text-zinc-400">Junte-se ao Grafogram</p>
           </div>
 
           {error && (
