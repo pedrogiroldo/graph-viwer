@@ -463,7 +463,7 @@ export default function HomePage() {
                 <h2 className="text-xl font-semibold text-zinc-100">
                   Grafo de Relacionamentos
                 </h2>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                   <span className="text-sm text-zinc-400">Live</span>
                 </div>
