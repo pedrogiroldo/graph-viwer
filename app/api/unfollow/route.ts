@@ -24,10 +24,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Impedir follow para si mesmo
+    // Impedir unfollow para si mesmo
     if (followerIdNum === followingIdNum) {
       return NextResponse.json(
-        { error: "Não é possível seguir a si mesmo" },
+        { error: "Não é possível deixar de seguir a si mesmo" },
         { status: 400 }
       );
     }
@@ -45,8 +45,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verificar se já segue
-    const alreadyFollowing = await prisma.user.findFirst({
+    // Verificar se segue
+    const isFollowing = await prisma.user.findFirst({
       where: {
         id: followerIdNum,
         following: {
@@ -57,20 +57,20 @@ export async function POST(request: Request) {
       },
     });
 
-    if (alreadyFollowing) {
+    if (!isFollowing) {
       return NextResponse.json(
-        { error: "Você já segue este usuário" },
+        { error: "Você não segue este usuário" },
         { status: 400 }
       );
     }
 
-    // Criar relação de follow e post
+    // Remover relação de follow e criar post
     await prisma.$transaction([
       prisma.user.update({
         where: { id: followerIdNum },
         data: {
           following: {
-            connect: { id: followingIdNum },
+            disconnect: { id: followingIdNum },
           },
         },
       }),
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
         data: {
           followerId: followerIdNum,
           followingId: followingIdNum,
-          action: "follow",
+          action: "unfollow",
         },
       }),
     ]);
@@ -90,19 +90,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Erro ao criar follow:", error);
-    // Verificar se é erro de relação duplicada
-    if (
-      error instanceof Error &&
-      error.message.includes("Unique constraint")
-    ) {
-      return NextResponse.json(
-        { error: "Relação de follow já existe" },
-        { status: 400 }
-      );
-    }
+    console.error("Erro ao remover follow:", error);
     return NextResponse.json(
-      { error: "Erro ao criar follow" },
+      { error: "Erro ao remover follow" },
       { status: 500 }
     );
   }
