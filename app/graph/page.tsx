@@ -28,71 +28,76 @@ export default function GraphPage() {
     try {
       const response = await fetch("/api/graph");
       if (!response.ok) {
-        setNodes([]);
-        setEdges([]);
+        // Só atualizar se o estado atual não estiver vazio
+        setNodes((prevNodes) => {
+          if (prevNodes.length === 0) return prevNodes;
+          return [];
+        });
+        setEdges((prevEdges) => {
+          if (prevEdges.length === 0) return prevEdges;
+          return [];
+        });
         return;
       }
       const data = await response.json();
       const newNodes = Array.isArray(data.nodes) ? data.nodes : [];
       const newEdges = Array.isArray(data.edges) ? data.edges : [];
       
-      // Comparar dados para evitar atualizações desnecessárias
-      // Comparação mais eficiente: verificar IDs e estrutura básica
-      const nodesChanged = 
-        nodes.length !== newNodes.length ||
-        nodes.some((node, i) => 
-          !newNodes[i] || 
-          node.id !== newNodes[i].id || 
-          node.label !== newNodes[i].label
-        ) ||
-        newNodes.some((node, i) => 
-          !nodes[i] || 
-          node.id !== nodes[i].id || 
-          node.label !== nodes[i].label
-        );
+      // Comparar dados de forma mais precisa usando JSON.stringify
+      // Criar versões ordenadas para comparação estável
+      const sortNodes = (arr: Node[]) => [...arr].sort((a, b) => a.id.localeCompare(b.id));
+      const sortEdges = (arr: Edge[]) => [...arr].sort((a, b) => {
+        const aKey = `${a.source}-${a.target}`;
+        const bKey = `${b.source}-${b.target}`;
+        return aKey.localeCompare(bKey);
+      });
       
-      const edgesChanged = 
-        edges.length !== newEdges.length ||
-        edges.some((edge, i) => 
-          !newEdges[i] || 
-          edge.source !== newEdges[i].source || 
-          edge.target !== newEdges[i].target
-        ) ||
-        newEdges.some((edge, i) => 
-          !edges[i] || 
-          edge.source !== edges[i].source || 
-          edge.target !== edges[i].target
-        );
+      const currentNodesSorted = sortNodes(nodes);
+      const newNodesSorted = sortNodes(newNodes);
+      const currentEdgesSorted = sortEdges(edges);
+      const newEdgesSorted = sortEdges(newEdges);
       
-      // Só atualizar se houver mudanças reais
-      if (nodesChanged || edgesChanged) {
+      const nodesChanged = JSON.stringify(currentNodesSorted) !== JSON.stringify(newNodesSorted);
+      const edgesChanged = JSON.stringify(currentEdgesSorted) !== JSON.stringify(newEdgesSorted);
+      
+      // Só atualizar estado se houver mudanças reais
+      if (nodesChanged) {
         setNodes(newNodes);
+      }
+      
+      if (edgesChanged) {
         setEdges(newEdges);
+      }
+      
+      // Atualizar layout do Cytoscape apenas se houver mudanças significativas
+      if ((nodesChanged || edgesChanged) && cyRef.current) {
+        const hasNewNodes = newNodes.length > nodes.length;
+        const hasNewEdges = newEdges.length > edges.length;
         
-        // Atualizar layout do Cytoscape apenas se houver mudanças significativas
-        // (novos nós ou novas arestas, não apenas reordenação)
-        if (cyRef.current) {
-          const hasNewNodes = newNodes.length > nodes.length;
-          const hasNewEdges = newEdges.length > edges.length;
-          
-          if (hasNewNodes || hasNewEdges) {
-            setTimeout(() => {
-              const layout = {
-                name: "cose",
-                animate: true,
-                animationDuration: 1000,
-                fit: true,
-                padding: 30,
-              };
-              cyRef.current?.layout(layout).run();
-            }, 100);
-          }
+        if (hasNewNodes || hasNewEdges) {
+          setTimeout(() => {
+            const layout = {
+              name: "cose",
+              animate: true,
+              animationDuration: 1000,
+              fit: true,
+              padding: 30,
+            };
+            cyRef.current?.layout(layout).run();
+          }, 100);
         }
       }
     } catch (error) {
       console.error("Erro ao carregar grafo:", error);
-      setNodes([]);
-      setEdges([]);
+      // Só atualizar se o estado atual não estiver vazio
+      setNodes((prevNodes) => {
+        if (prevNodes.length === 0) return prevNodes;
+        return [];
+      });
+      setEdges((prevEdges) => {
+        if (prevEdges.length === 0) return prevEdges;
+        return [];
+      });
     } finally {
       setLoading(false);
     }
