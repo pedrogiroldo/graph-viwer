@@ -430,31 +430,34 @@ export default function HomePage() {
       {/* Header */}
       <header className="border-b border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 max-w-7xl">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                 Grafogram
               </h1>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <Link
                 href="/short-path"
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg transition-all font-medium"
+                className="px-4 py-2.5 sm:py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg transition-all font-medium text-center text-sm sm:text-base min-h-[44px] flex items-center justify-center"
               >
-                Caminho Mais Curto
+                <span className="hidden sm:inline">Caminho Mais Curto</span>
+                <span className="sm:hidden">Caminho Curto</span>
               </Link>
-              <span className="text-zinc-400">
-                Olá,{" "}
-                <span className="text-zinc-100 font-medium">
-                  {currentUser?.name}
+              <div className="flex items-center gap-3 sm:gap-4">
+                <span className="text-zinc-400 text-sm sm:text-base">
+                  Olá,{" "}
+                  <span className="text-zinc-100 font-medium">
+                    {currentUser?.name}
+                  </span>
                 </span>
-              </span>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors"
-              >
-                Sair
-              </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2.5 sm:py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors text-sm sm:text-base min-h-[44px] whitespace-nowrap"
+                >
+                  Sair
+                </button>
+              </div>
             </div>
           </div>
         </div>
