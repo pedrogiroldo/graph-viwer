@@ -325,8 +325,94 @@ export default function ShortPathPage() {
 
       <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 max-w-[1920px] flex-1 overflow-y-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Coluna 1: Controles - Em cima no mobile, esquerda no desktop */}
-          <div className="flex flex-col gap-4 order-1 lg:order-1 lg:h-full lg:overflow-y-auto lg:pr-2">
+          {/* Coluna 1: Visualização do Grafo - Em cima no mobile, esquerda no desktop */}
+          <div className="lg:col-span-2 flex flex-col gap-4 order-1 lg:order-1">
+            {/* Grafo */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-2 sm:p-4 backdrop-blur-sm shadow-2xl flex flex-col min-h-[400px] sm:min-h-[500px] lg:min-h-0 lg:flex-1">
+              <div className="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
+                <h2 className="text-base sm:text-lg md:text-xl font-semibold text-zinc-100">
+                  Visualização do Grafo
+                </h2>
+                <button
+                  onClick={() => setIsFullscreen(true)}
+                  className="px-2 sm:px-3 py-1 sm:py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
+                  title="Abrir em tela cheia"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 w-3 sm:h-4 sm:w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">Tela Cheia</span>
+                </button>
+              </div>
+              <div className="bg-zinc-950 rounded-lg border border-zinc-800 flex-1 overflow-hidden shadow-inner min-h-[350px] sm:min-h-[450px] lg:min-h-0">
+                {cyElements.length > 0 ? (
+                  <CytoscapeComponent
+                    elements={cyElements}
+                    style={{ width: "100%", height: "100%" }}
+                    stylesheet={cyStylesheet}
+                    layout={cyLayout}
+                    cy={(cy: Cytoscape.Core) => {
+                      cyRef.current = cy;
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm sm:text-base px-4 text-center">
+                    Adicione nós e arestas para visualizar o grafo
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Resultado do Caminho Mais Curto */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-3 sm:p-4 backdrop-blur-sm shadow-xl flex-shrink-0">
+              <h2 className="text-base sm:text-lg md:text-xl font-semibold text-zinc-100 mb-2 sm:mb-3">
+                Caminho Mais Curto
+              </h2>
+              {shortestDistance !== null ? (
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                    <span className="text-zinc-400 text-sm sm:text-base">Distância:</span>
+                    <span className="text-green-400 font-bold text-xl sm:text-2xl">
+                      {shortestDistance}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2 sm:gap-3 flex-wrap">
+                    <span className="text-zinc-400 text-sm sm:text-base flex-shrink-0">Caminho:</span>
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      {shortestPath.map((node, index) => (
+                        <div key={index} className="flex items-center gap-1.5 sm:gap-2">
+                          <span className="px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 font-semibold text-sm sm:text-base">
+                            {node}
+                          </span>
+                          {index < shortestPath.length - 1 && (
+                            <span className="text-zinc-500 text-sm sm:text-base">→</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-zinc-400 text-sm sm:text-base">
+                  Não há caminho entre os nós selecionados.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Coluna 2: Controles - Embaixo no mobile, direita no desktop */}
+          <div className="flex flex-col gap-4 order-2 lg:order-2 lg:h-full lg:overflow-y-auto lg:pr-2">
             {/* Botão Carregar Dados Iniciais */}
             {nodes.length === 0 && (
               <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-3 sm:p-4 backdrop-blur-sm shadow-xl flex-shrink-0">
@@ -561,92 +647,6 @@ export default function ShortPathPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Coluna 2: Visualização do Grafo - Em baixo no mobile, direita no desktop */}
-          <div className="lg:col-span-2 flex flex-col gap-4 order-2 lg:order-2">
-            {/* Grafo */}
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-2 sm:p-4 backdrop-blur-sm shadow-2xl flex flex-col min-h-[400px] sm:min-h-[500px] lg:min-h-0 lg:flex-1">
-              <div className="flex items-center justify-between mb-2 sm:mb-3 flex-shrink-0">
-                <h2 className="text-base sm:text-lg md:text-xl font-semibold text-zinc-100">
-                  Visualização do Grafo
-                </h2>
-                <button
-                  onClick={() => setIsFullscreen(true)}
-                  className="px-2 sm:px-3 py-1 sm:py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors text-xs sm:text-sm flex items-center gap-1 sm:gap-2"
-                  title="Abrir em tela cheia"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-3 w-3 sm:h-4 sm:w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                    />
-                  </svg>
-                  <span className="hidden sm:inline">Tela Cheia</span>
-                </button>
-              </div>
-              <div className="bg-zinc-950 rounded-lg border border-zinc-800 flex-1 overflow-hidden shadow-inner min-h-[350px] sm:min-h-[450px] lg:min-h-0">
-                {cyElements.length > 0 ? (
-                  <CytoscapeComponent
-                    elements={cyElements}
-                    style={{ width: "100%", height: "100%" }}
-                    stylesheet={cyStylesheet}
-                    layout={cyLayout}
-                    cy={(cy: Cytoscape.Core) => {
-                      cyRef.current = cy;
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm sm:text-base px-4 text-center">
-                    Adicione nós e arestas para visualizar o grafo
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Resultado do Caminho Mais Curto */}
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-3 sm:p-4 backdrop-blur-sm shadow-xl flex-shrink-0">
-              <h2 className="text-base sm:text-lg md:text-xl font-semibold text-zinc-100 mb-2 sm:mb-3">
-                Caminho Mais Curto
-              </h2>
-              {shortestDistance !== null ? (
-                <div className="space-y-2 sm:space-y-3">
-                  <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                    <span className="text-zinc-400 text-sm sm:text-base">Distância:</span>
-                    <span className="text-green-400 font-bold text-xl sm:text-2xl">
-                      {shortestDistance}
-                    </span>
-                  </div>
-                  <div className="flex items-start gap-2 sm:gap-3 flex-wrap">
-                    <span className="text-zinc-400 text-sm sm:text-base flex-shrink-0">Caminho:</span>
-                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                      {shortestPath.map((node, index) => (
-                        <div key={index} className="flex items-center gap-1.5 sm:gap-2">
-                          <span className="px-2 sm:px-3 py-1 sm:py-1.5 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 font-semibold text-sm sm:text-base">
-                            {node}
-                          </span>
-                          {index < shortestPath.length - 1 && (
-                            <span className="text-zinc-500 text-sm sm:text-base">→</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-zinc-400 text-sm sm:text-base">
-                  Não há caminho entre os nós selecionados.
-                </p>
-              )}
             </div>
           </div>
         </div>
