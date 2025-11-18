@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Grafogram",
   description: "by Pedro Giroldo",
+  icons: {
+    icon: "/cat1.jpg",
+  },
 };
 
 export default function RootLayout({
