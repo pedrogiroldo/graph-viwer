@@ -122,6 +122,15 @@ export default function LoginPage() {
               </Link>
             </p>
           </div>
+
+          <div className="mt-6 pt-6 border-t border-zinc-800">
+            <Link
+              href="/short-path"
+              className="w-full block px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-purple-500/50 text-center"
+            >
+              Caminho Mais Curto (Dijkstra)
+            </Link>
+          </div>
         </div>
       </div>
     </div>

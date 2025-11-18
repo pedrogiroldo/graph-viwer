@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import CytoscapeComponent from "react-cytoscapejs";
 import type Cytoscape from "cytoscape";
 import { io, Socket } from "socket.io-client";
@@ -436,6 +437,12 @@ export default function HomePage() {
               </h1>
             </div>
             <div className="flex items-center gap-4">
+              <Link
+                href="/short-path"
+                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-lg transition-all font-medium"
+              >
+                Caminho Mais Curto
+              </Link>
               <span className="text-zinc-400">
                 Olá,{" "}
                 <span className="text-zinc-100 font-medium">
